@@ -1,0 +1,1001 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Heartopia Auto Painter 🎨</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Baloo+2:wght@400;600;800&display=swap');
+
+:root {
+  --bg: #fdf6f0;
+  --card: #fff9f5;
+  --pink: #ff6b9d;
+  --pink-light: #ffcfe3;
+  --lavender: #c77dff;
+  --mint: #52d9a4;
+  --peach: #ffb085;
+  --sky: #74c7f5;
+  --yellow: #ffd166;
+  --text: #3d2c4e;
+  --muted: #a08bba;
+  --border: #e8d5f5;
+  --shadow: rgba(199,125,255,0.15);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  background-image: 
+    radial-gradient(circle at 10% 20%, #ffe0f560 0%, transparent 40%),
+    radial-gradient(circle at 90% 80%, #d4f1ff50 0%, transparent 40%),
+    radial-gradient(circle at 50% 50%, #fff0e050 0%, transparent 60%);
+  font-family: 'Nunito', sans-serif;
+  color: var(--text);
+  min-height: 100vh;
+  padding: 20px;
+}
+
+/* Floating deco */
+.deco {
+  position: fixed;
+  pointer-events: none;
+  font-size: 24px;
+  opacity: 0.15;
+  animation: float 6s ease-in-out infinite;
+  z-index: 0;
+}
+.deco:nth-child(1) { top: 5%; left: 3%; animation-delay: 0s; }
+.deco:nth-child(2) { top: 15%; right: 5%; animation-delay: 1s; font-size: 18px; }
+.deco:nth-child(3) { bottom: 20%; left: 6%; animation-delay: 2s; font-size: 20px; }
+.deco:nth-child(4) { bottom: 10%; right: 3%; animation-delay: 0.5s; }
+.deco:nth-child(5) { top: 40%; left: 1%; animation-delay: 3s; font-size: 16px; }
+.deco:nth-child(6) { top: 60%; right: 2%; animation-delay: 1.5s; font-size: 22px; }
+@keyframes float {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-12px) rotate(8deg); }
+}
+
+.container {
+  max-width: 960px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+
+/* HEADER */
+header {
+  text-align: center;
+  margin-bottom: 32px;
+  animation: slideDown 0.6s ease;
+}
+@keyframes slideDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: none; } }
+
+.header-emoji {
+  font-size: 52px;
+  display: block;
+  margin-bottom: 8px;
+  animation: bounce 2s ease-in-out infinite;
+}
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+h1 {
+  font-family: 'Baloo 2', cursive;
+  font-size: 36px;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--pink), var(--lavender));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 6px;
+}
+
+.subtitle {
+  color: var(--muted);
+  font-size: 15px;
+  font-weight: 600;
+}
+
+/* CARDS */
+.card {
+  background: var(--card);
+  border: 2px solid var(--border);
+  border-radius: 20px;
+  padding: 24px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 20px var(--shadow);
+  animation: fadeUp 0.5s ease both;
+}
+@keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+.card:nth-child(2) { animation-delay: 0.1s; }
+.card:nth-child(3) { animation-delay: 0.2s; }
+
+.card-title {
+  font-family: 'Baloo 2', cursive;
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* STEP 1: Upload */
+.upload-zone {
+  border: 2.5px dashed var(--pink-light);
+  border-radius: 16px;
+  padding: 40px 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: #fff5fa;
+  position: relative;
+}
+.upload-zone:hover, .upload-zone.dragover {
+  border-color: var(--pink);
+  background: #ffe8f3;
+  transform: scale(1.01);
+}
+.upload-zone input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+.upload-icon { font-size: 40px; margin-bottom: 10px; }
+.upload-text { color: var(--pink); font-weight: 700; font-size: 16px; }
+.upload-sub { color: var(--muted); font-size: 13px; margin-top: 4px; }
+
+/* CONTROLS */
+.controls-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.control-group label {
+  display: block;
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+select, input[type="range"] {
+  width: 100%;
+  padding: 10px 14px;
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  background: white;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.2s;
+  appearance: none;
+}
+select:focus { border-color: var(--lavender); }
+
+.range-wrap { display: flex; align-items: center; gap: 10px; }
+input[type="range"] {
+  padding: 0;
+  height: 6px;
+  border: none;
+  background: var(--border);
+  border-radius: 6px;
+  accent-color: var(--pink);
+}
+.range-val {
+  background: var(--pink);
+  color: white;
+  border-radius: 8px;
+  padding: 3px 10px;
+  font-size: 13px;
+  font-weight: 800;
+  min-width: 40px;
+  text-align: center;
+}
+
+/* CONVERT BUTTON */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 13px 28px;
+  border: none;
+  border-radius: 50px;
+  font-family: 'Baloo 2', cursive;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-decoration: none;
+}
+.btn-primary {
+  background: linear-gradient(135deg, var(--pink), var(--lavender));
+  color: white;
+  box-shadow: 0 4px 16px rgba(255,107,157,0.4);
+  width: 100%;
+  justify-content: center;
+  font-size: 17px;
+}
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(255,107,157,0.5); }
+.btn-primary:active { transform: translateY(0); }
+.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+.btn-secondary {
+  background: white;
+  color: var(--text);
+  border: 2px solid var(--border);
+  font-size: 14px;
+  padding: 9px 20px;
+}
+.btn-secondary:hover { border-color: var(--pink); color: var(--pink); }
+
+/* OUTPUT SECTION */
+#output-section { display: none; }
+
+.canvas-wrap {
+  position: relative;
+  border: 2px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+  background: #f0e8ff;
+  margin-bottom: 16px;
+}
+
+canvas { display: block; max-width: 100%; height: auto; image-rendering: pixelated; }
+
+/* PAINT GUIDE */
+.paint-guide {
+  margin-top: 16px;
+}
+
+.guide-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.guide-title {
+  font-family: 'Baloo 2', cursive;
+  font-weight: 700;
+  font-size: 16px;
+}
+
+.color-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 10px;
+  max-height: 320px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.color-list::-webkit-scrollbar { width: 6px; }
+.color-list::-webkit-scrollbar-track { background: var(--border); border-radius: 10px; }
+.color-list::-webkit-scrollbar-thumb { background: var(--lavender); border-radius: 10px; }
+
+.color-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background: white;
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.15s;
+  position: relative;
+}
+.color-item:hover { border-color: var(--lavender); transform: scale(1.02); }
+.color-item.active { border-color: var(--pink); box-shadow: 0 0 0 3px var(--pink-light); }
+
+.color-swatch {
+  width: 28px; height: 28px;
+  border-radius: 8px;
+  border: 2px solid rgba(0,0,0,0.1);
+  flex-shrink: 0;
+}
+.color-info { flex: 1; min-width: 0; }
+.color-name { font-size: 11px; font-weight: 700; truncate; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.color-hex { font-size: 10px; color: var(--muted); font-family: monospace; }
+.color-count {
+  background: var(--lavender);
+  color: white;
+  border-radius: 20px;
+  padding: 2px 8px;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+/* PIXEL VIEW */
+.pixel-view-wrap {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+@media (max-width: 600px) {
+  .pixel-view-wrap { grid-template-columns: 1fr; }
+  h1 { font-size: 26px; }
+}
+
+.view-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--muted);
+  text-align: center;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* PAINTING MODE */
+#paint-mode { display: none; }
+
+.paint-mode-banner {
+  background: linear-gradient(135deg, #fff0fa, #f0e8ff);
+  border: 2px solid var(--pink-light);
+  border-radius: 16px;
+  padding: 16px 20px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.paint-mode-icon { font-size: 32px; }
+.paint-mode-text { flex: 1; }
+.paint-mode-text strong { display: block; font-size: 15px; }
+.paint-mode-text span { font-size: 13px; color: var(--muted); }
+
+.current-color-display {
+  border: 3px solid var(--border);
+  border-radius: 16px;
+  padding: 16px;
+  text-align: center;
+  background: white;
+  margin-bottom: 16px;
+}
+.current-swatch {
+  width: 60px; height: 60px;
+  border-radius: 12px;
+  margin: 0 auto 8px;
+  border: 3px solid rgba(0,0,0,0.1);
+}
+.current-name { font-weight: 800; font-size: 15px; }
+.current-hex { font-size: 12px; color: var(--muted); font-family: monospace; }
+.current-progress { font-size: 12px; color: var(--mint); font-weight: 700; margin-top: 4px; }
+
+/* Highlighted canvas overlay */
+.canvas-container { position: relative; display: inline-block; width: 100%; }
+#highlight-canvas { position: absolute; top: 0; left: 0; pointer-events: none; image-rendering: pixelated; }
+
+/* Stats bar */
+.stats {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+.stat {
+  background: white;
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  padding: 10px 16px;
+  flex: 1;
+  min-width: 100px;
+  text-align: center;
+}
+.stat-val { font-family: 'Baloo 2', cursive; font-size: 22px; font-weight: 800; color: var(--pink); }
+.stat-lbl { font-size: 11px; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+
+/* progress bar */
+.prog-bar { height: 8px; background: var(--border); border-radius: 8px; overflow: hidden; margin-top: 4px; }
+.prog-fill { height: 100%; background: linear-gradient(90deg, var(--mint), var(--sky)); border-radius: 8px; transition: width 0.4s ease; }
+
+/* TOAST */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(80px);
+  background: var(--text);
+  color: white;
+  padding: 12px 24px;
+  border-radius: 50px;
+  font-weight: 700;
+  font-size: 14px;
+  z-index: 1000;
+  transition: transform 0.3s ease;
+  pointer-events: none;
+}
+.toast.show { transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+
+<!-- Floating decorations -->
+<div class="deco">🌸</div>
+<div class="deco">⭐</div>
+<div class="deco">🎨</div>
+<div class="deco">💖</div>
+<div class="deco">✨</div>
+<div class="deco">🌷</div>
+
+<div class="container">
+
+  <header>
+    <span class="header-emoji">🎨</span>
+    <h1>Heartopia Auto Painter</h1>
+    <p class="subtitle">Upload gambar → Konversi ke pixel art → Panduan melukis di Heartopia!</p>
+  </header>
+
+  <!-- STEP 1: UPLOAD & SETTINGS -->
+  <div class="card">
+    <div class="card-title">📁 1. Upload Gambar</div>
+    <div class="upload-zone" id="upload-zone">
+      <input type="file" id="file-input" accept="image/*">
+      <div class="upload-icon">🖼️</div>
+      <div class="upload-text">Klik atau drag gambar ke sini</div>
+      <div class="upload-sub">PNG, JPG, GIF, WebP — semua format didukung</div>
+    </div>
+    <canvas id="preview-canvas" style="display:none; max-width:100%; border-radius:12px; margin-top:12px;"></canvas>
+  </div>
+
+  <!-- STEP 2: SETTINGS -->
+  <div class="card">
+    <div class="card-title">⚙️ 2. Pengaturan Canvas</div>
+    <div class="controls-grid">
+      <div class="control-group">
+        <label>Ukuran Grid</label>
+        <select id="grid-size">
+          <option value="30">30 × 30 (Kecil)</option>
+          <option value="50" selected>50 × 50 (Standar)</option>
+          <option value="100">100 × 100 (Detail)</option>
+          <option value="150">150 × 150 (Ultra Detail)</option>
+        </select>
+      </div>
+      <div class="control-group">
+        <label>Rasio Canvas</label>
+        <select id="aspect-ratio">
+          <option value="1:1" selected>1:1 (Persegi)</option>
+          <option value="16:9">16:9 (Landscape)</option>
+          <option value="9:16">9:16 (Portrait)</option>
+          <option value="4:3">4:3</option>
+          <option value="3:4">3:4</option>
+        </select>
+      </div>
+      <div class="control-group">
+        <label>Jumlah Warna: <span id="colors-val">24</span></label>
+        <div class="range-wrap">
+          <input type="range" id="num-colors" min="8" max="64" value="24" step="4">
+          <div class="range-val" id="colors-display">24</div>
+        </div>
+      </div>
+      <div class="control-group">
+        <label>Brightness</label>
+        <div class="range-wrap">
+          <input type="range" id="brightness" min="-50" max="50" value="0">
+          <div class="range-val" id="brightness-display">0</div>
+        </div>
+      </div>
+    </div>
+    <button class="btn btn-primary" id="convert-btn" disabled onclick="convertImage()">
+      ✨ Konversi ke Pixel Art Heartopia
+    </button>
+  </div>
+
+  <!-- OUTPUT -->
+  <div id="output-section">
+
+    <div class="card">
+      <div class="card-title">🖼️ Hasil Konversi</div>
+
+      <div class="stats">
+        <div class="stat">
+          <div class="stat-val" id="stat-pixels">0</div>
+          <div class="stat-lbl">Total Pixel</div>
+        </div>
+        <div class="stat">
+          <div class="stat-val" id="stat-colors">0</div>
+          <div class="stat-lbl">Warna Unik</div>
+        </div>
+        <div class="stat">
+          <div class="stat-val" id="stat-size">0×0</div>
+          <div class="stat-lbl">Ukuran Grid</div>
+        </div>
+      </div>
+
+      <div class="pixel-view-wrap">
+        <div>
+          <div class="view-label">🖼️ Gambar Asli</div>
+          <div class="canvas-wrap">
+            <canvas id="original-canvas"></canvas>
+          </div>
+        </div>
+        <div>
+          <div class="view-label">🎨 Pixel Art (Heartopia)</div>
+          <div class="canvas-wrap">
+            <div class="canvas-container">
+              <canvas id="result-canvas"></canvas>
+              <canvas id="highlight-canvas"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex; gap:10px; margin-top:12px; flex-wrap:wrap;">
+        <button class="btn btn-secondary" onclick="downloadResult()">💾 Download PNG</button>
+        <button class="btn btn-secondary" onclick="toggleGrid()">🔲 Toggle Grid</button>
+        <button class="btn btn-primary" onclick="startPaintMode()" style="flex:1; min-width:180px;">
+          🎨 Mulai Mode Melukis!
+        </button>
+      </div>
+    </div>
+
+    <!-- COLOR PALETTE LIST -->
+    <div class="card">
+      <div class="paint-guide">
+        <div class="guide-header">
+          <div class="guide-title">🎨 Daftar Warna yang Dibutuhkan</div>
+          <div style="font-size:13px; color:var(--muted);">Urutkan: terbanyak → tersedikit</div>
+        </div>
+        <div class="color-list" id="color-list"></div>
+      </div>
+    </div>
+
+    <!-- PAINT MODE -->
+    <div class="card" id="paint-mode">
+      <div class="card-title">🖌️ Mode Melukis — Panduan Langkah Demi Langkah</div>
+
+      <div class="paint-mode-banner">
+        <div class="paint-mode-icon">📱</div>
+        <div class="paint-mode-text">
+          <strong>Buka Heartopia di perangkatmu, lalu ikuti panduan ini!</strong>
+          <span>Klik warna di bawah untuk highlight posisi pixel yang harus dilukis</span>
+        </div>
+      </div>
+
+      <div id="current-color-display" class="current-color-display">
+        <div class="current-swatch" id="current-swatch"></div>
+        <div class="current-name" id="current-name">Pilih warna di atas untuk mulai</div>
+        <div class="current-hex" id="current-hex">-</div>
+        <div class="current-progress" id="current-progress"></div>
+        <div class="prog-bar" style="margin-top:8px;"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+      </div>
+
+      <div style="margin-bottom:12px;">
+        <div class="guide-title" style="margin-bottom:10px;">Klik warna → lihat posisinya di canvas 👆</div>
+        <div class="color-list" id="paint-color-list"></div>
+      </div>
+
+      <div style="display:flex; gap:10px; flex-wrap:wrap;">
+        <button class="btn btn-secondary" onclick="prevColor()">← Warna Sebelumnya</button>
+        <button class="btn btn-primary" style="flex:1;" onclick="nextColor()">Warna Berikutnya →</button>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ========== HEARTOPIA COLOR PALETTE ==========
+// Based on the official Heartopia in-game palette
+const HEARTOPIA_PALETTE = [
+  // Whites & Neutrals
+  { name: 'Pure White', hex: '#FFFFFF' },
+  { name: 'Cream', hex: '#FFF8EC' },
+  { name: 'Ivory', hex: '#F5EDD6' },
+  { name: 'Pearl', hex: '#E8E0D0' },
+  { name: 'Silver', hex: '#C8C0B8' },
+  { name: 'Stone', hex: '#A89888' },
+  { name: 'Driftwood', hex: '#887868' },
+  { name: 'Walnut', hex: '#685848' },
+  { name: 'Espresso', hex: '#483830' },
+  { name: 'Charcoal', hex: '#302820' },
+  { name: 'Midnight', hex: '#181410' },
+  // Pinks & Roses
+  { name: 'Blush', hex: '#FFD4E8' },
+  { name: 'Cotton Candy', hex: '#FFB0CC' },
+  { name: 'Rose Petal', hex: '#FF88AA' },
+  { name: 'Heartopia Pink', hex: '#FF6090' },
+  { name: 'Hot Pink', hex: '#E83870' },
+  { name: 'Deep Rose', hex: '#C01858' },
+  { name: 'Berry', hex: '#900840' },
+  // Reds
+  { name: 'Coral Blush', hex: '#FFD0C0' },
+  { name: 'Salmon', hex: '#FFB090' },
+  { name: 'Coral', hex: '#FF8060' },
+  { name: 'Tomato', hex: '#FF4830' },
+  { name: 'Crimson', hex: '#D82010' },
+  { name: 'Ruby', hex: '#A00010' },
+  // Oranges
+  { name: 'Peach Cream', hex: '#FFE8C8' },
+  { name: 'Apricot', hex: '#FFD090' },
+  { name: 'Tangerine', hex: '#FFB050' },
+  { name: 'Orange', hex: '#FF9020' },
+  { name: 'Amber', hex: '#E87000' },
+  { name: 'Rust', hex: '#C05000' },
+  // Yellows
+  { name: 'Lemon Cream', hex: '#FFF8B0' },
+  { name: 'Butter', hex: '#FFE870' },
+  { name: 'Sunshine', hex: '#FFD820' },
+  { name: 'Marigold', hex: '#F0B800' },
+  { name: 'Gold', hex: '#C89000' },
+  { name: 'Ochre', hex: '#A07000' },
+  // Greens
+  { name: 'Mint Cream', hex: '#D0FFE8' },
+  { name: 'Spearmint', hex: '#90EFC8' },
+  { name: 'Sage', hex: '#70C890' },
+  { name: 'Meadow', hex: '#40A060' },
+  { name: 'Forest', hex: '#207840' },
+  { name: 'Moss', hex: '#105028' },
+  // Teals & Cyans
+  { name: 'Seafoam', hex: '#B0F0E8' },
+  { name: 'Aqua', hex: '#60D8D0' },
+  { name: 'Teal', hex: '#00B0A8' },
+  { name: 'Ocean', hex: '#008880' },
+  { name: 'Deep Teal', hex: '#006058' },
+  // Blues
+  { name: 'Sky Mist', hex: '#C8E8FF' },
+  { name: 'Baby Blue', hex: '#98D0FF' },
+  { name: 'Cornflower', hex: '#60A8F8' },
+  { name: 'Sapphire', hex: '#3080E8' },
+  { name: 'Royal Blue', hex: '#1858C0' },
+  { name: 'Navy', hex: '#083888' },
+  { name: 'Midnight Blue', hex: '#041860' },
+  // Purples & Lavendars
+  { name: 'Lavender Mist', hex: '#EED8FF' },
+  { name: 'Lilac', hex: '#D0A8FF' },
+  { name: 'Violet', hex: '#B070F0' },
+  { name: 'Purple', hex: '#8840D8' },
+  { name: 'Plum', hex: '#6018A8' },
+  { name: 'Deep Purple', hex: '#400878' },
+  // Browns
+  { name: 'Sand', hex: '#F0D8A8' },
+  { name: 'Caramel', hex: '#D0A060' },
+  { name: 'Chestnut', hex: '#A07038' },
+  { name: 'Mahogany', hex: '#785020' },
+  { name: 'Dark Brown', hex: '#503010' },
+  // Transparent / Black
+  { name: 'Black', hex: '#000000' },
+];
+
+// ========== STATE ==========
+let originalImageData = null;
+let pixelData = [];
+let gridW = 32, gridH = 32;
+let colorGroups = [];
+let activeColorIdx = -1;
+let showGrid = true;
+let completedColors = new Set();
+
+// ========== COLOR UTILS ==========
+function hexToRgb(hex) {
+  const r = parseInt(hex.slice(1,3), 16);
+  const g = parseInt(hex.slice(3,5), 16);
+  const b = parseInt(hex.slice(5,7), 16);
+  return [r, g, b];
+}
+
+function colorDist(a, b) {
+  return Math.sqrt((a[0]-b[0])**2 + (a[1]-b[1])**2 + (a[2]-b[2])**2);
+}
+
+function nearestPaletteColor(r, g, b) {
+  let best = null, bestD = Infinity;
+  for (const c of HEARTOPIA_PALETTE) {
+    const [pr, pg, pb] = hexToRgb(c.hex);
+    const d = colorDist([r,g,b], [pr,pg,pb]);
+    if (d < bestD) { bestD = d; best = c; }
+  }
+  return best;
+}
+
+function applyBrightness(r, g, b, delta) {
+  return [
+    Math.min(255, Math.max(0, r + delta)),
+    Math.min(255, Math.max(0, g + delta)),
+    Math.min(255, Math.max(0, b + delta))
+  ];
+}
+
+// ========== UPLOAD ==========
+const fileInput = document.getElementById('file-input');
+const uploadZone = document.getElementById('upload-zone');
+const previewCanvas = document.getElementById('preview-canvas');
+
+fileInput.addEventListener('change', e => {
+  if (e.target.files[0]) loadImage(e.target.files[0]);
+});
+
+uploadZone.addEventListener('dragover', e => {
+  e.preventDefault();
+  uploadZone.classList.add('dragover');
+});
+uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('dragover'));
+uploadZone.addEventListener('drop', e => {
+  e.preventDefault();
+  uploadZone.classList.remove('dragover');
+  if (e.dataTransfer.files[0]) loadImage(e.dataTransfer.files[0]);
+});
+
+function loadImage(file) {
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const img = new Image();
+    img.onload = () => {
+      // Show preview
+      const maxW = 300, maxH = 200;
+      let w = img.width, h = img.height;
+      if (w > maxW) { h = h * maxW / w; w = maxW; }
+      if (h > maxH) { w = w * maxH / h; h = maxH; }
+      previewCanvas.width = w; previewCanvas.height = h;
+      previewCanvas.style.display = 'block';
+      previewCanvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      originalImageData = img;
+      document.getElementById('convert-btn').disabled = false;
+      showToast('✅ Gambar berhasil dimuat!');
+    };
+    img.src = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+// ========== RANGE INPUTS ==========
+document.getElementById('num-colors').addEventListener('input', function() {
+  document.getElementById('colors-display').textContent = this.value;
+  document.getElementById('colors-val').textContent = this.value;
+});
+document.getElementById('brightness').addEventListener('input', function() {
+  document.getElementById('brightness-display').textContent = this.value;
+});
+
+// ========== CONVERT ==========
+function getGridDimensions() {
+  const size = parseInt(document.getElementById('grid-size').value);
+  const ratio = document.getElementById('aspect-ratio').value;
+  const [rw, rh] = ratio.split(':').map(Number);
+  if (rw >= rh) {
+    return [size, Math.round(size * rh / rw)];
+  } else {
+    return [Math.round(size * rw / rh), size];
+  }
+}
+
+function convertImage() {
+  if (!originalImageData) return;
+  [gridW, gridH] = getGridDimensions();
+  const brightness = parseInt(document.getElementById('brightness').value);
+
+  // Draw original scaled
+  const origCanvas = document.getElementById('original-canvas');
+  const display = 320;
+  const scale = Math.min(display / originalImageData.width, display / originalImageData.height);
+  origCanvas.width = Math.round(originalImageData.width * scale);
+  origCanvas.height = Math.round(originalImageData.height * scale);
+  origCanvas.getContext('2d').drawImage(originalImageData, 0, 0, origCanvas.width, origCanvas.height);
+
+  // Sample pixels
+  const tmpC = document.createElement('canvas');
+  tmpC.width = gridW; tmpC.height = gridH;
+  const tmpCtx = tmpC.getContext('2d');
+  tmpCtx.drawImage(originalImageData, 0, 0, gridW, gridH);
+  const imgData = tmpCtx.getImageData(0, 0, gridW, gridH).data;
+
+  pixelData = [];
+  for (let y = 0; y < gridH; y++) {
+    for (let x = 0; x < gridW; x++) {
+      const i = (y * gridW + x) * 4;
+      let [r, g, b] = applyBrightness(imgData[i], imgData[i+1], imgData[i+2], brightness);
+      const nearest = nearestPaletteColor(r, g, b);
+      pixelData.push({ x, y, color: nearest });
+    }
+  }
+
+  // Draw result
+  drawResult();
+
+  // Build color groups
+  buildColorGroups();
+
+  // Show output
+  document.getElementById('output-section').style.display = 'block';
+  document.getElementById('output-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  // Stats
+  document.getElementById('stat-pixels').textContent = gridW * gridH;
+  document.getElementById('stat-colors').textContent = colorGroups.length;
+  document.getElementById('stat-size').textContent = `${gridW}×${gridH}`;
+}
+
+function drawResult(highlightHex = null) {
+  const canvas = document.getElementById('result-canvas');
+  const CELL = Math.max(4, Math.floor(400 / Math.max(gridW, gridH)));
+  canvas.width = gridW * CELL;
+  canvas.height = gridH * CELL;
+  const ctx = canvas.getContext('2d');
+
+  for (const p of pixelData) {
+    ctx.fillStyle = p.color.hex;
+    ctx.fillRect(p.x * CELL, p.y * CELL, CELL, CELL);
+  }
+
+  if (showGrid && CELL >= 4) {
+    // Minor grid lines (tiap 1 pixel)
+    ctx.strokeStyle = 'rgba(0,0,0,0.30)';
+    ctx.lineWidth = 0.8;
+    for (let x = 0; x <= gridW; x++) {
+      if (x % 5 === 0) continue; // skip, digambar di bawah
+      ctx.beginPath(); ctx.moveTo(x*CELL, 0); ctx.lineTo(x*CELL, gridH*CELL); ctx.stroke();
+    }
+    for (let y = 0; y <= gridH; y++) {
+      if (y % 5 === 0) continue;
+      ctx.beginPath(); ctx.moveTo(0, y*CELL); ctx.lineTo(gridW*CELL, y*CELL); ctx.stroke();
+    }
+    // Major grid lines tiap 5 pixel — hitam tegas
+    ctx.strokeStyle = 'rgba(0,0,0,0.85)';
+    ctx.lineWidth = 1.5;
+    for (let x = 0; x <= gridW; x += 5) {
+      ctx.beginPath(); ctx.moveTo(x*CELL, 0); ctx.lineTo(x*CELL, gridH*CELL); ctx.stroke();
+    }
+    for (let y = 0; y <= gridH; y += 5) {
+      ctx.beginPath(); ctx.moveTo(0, y*CELL); ctx.lineTo(gridW*CELL, y*CELL); ctx.stroke();
+    }
+  }
+
+  // Highlight
+  const hCanvas = document.getElementById('highlight-canvas');
+  hCanvas.width = canvas.width;
+  hCanvas.height = canvas.height;
+  hCanvas.style.width = canvas.style.width;
+  hCanvas.style.height = canvas.style.height;
+  const hCtx = hCanvas.getContext('2d');
+  hCtx.clearRect(0, 0, hCanvas.width, hCanvas.height);
+
+  if (highlightHex) {
+    // Dim non-selected
+    hCtx.fillStyle = 'rgba(0,0,0,0.55)';
+    hCtx.fillRect(0, 0, hCanvas.width, hCanvas.height);
+    // Reveal selected
+    for (const p of pixelData) {
+      if (p.color.hex === highlightHex) {
+        hCtx.clearRect(p.x * CELL, p.y * CELL, CELL, CELL);
+        hCtx.fillStyle = p.color.hex;
+        hCtx.fillRect(p.x * CELL, p.y * CELL, CELL, CELL);
+        // bright border
+        hCtx.strokeStyle = 'rgba(255,255,255,0.9)';
+        hCtx.lineWidth = 1;
+        hCtx.strokeRect(p.x * CELL + 0.5, p.y * CELL + 0.5, CELL - 1, CELL - 1);
+      }
+    }
+  }
+}
+
+function buildColorGroups() {
+  const map = {};
+  for (const p of pixelData) {
+    if (!map[p.color.hex]) map[p.color.hex] = { color: p.color, count: 0 };
+    map[p.color.hex].count++;
+  }
+  colorGroups = Object.values(map).sort((a, b) => b.count - a.count);
+  renderColorList();
+  renderPaintColorList();
+}
+
+function renderColorList() {
+  const list = document.getElementById('color-list');
+  list.innerHTML = '';
+  colorGroups.forEach((g, i) => {
+    const div = document.createElement('div');
+    div.className = 'color-item';
+    div.innerHTML = `
+      <div class="color-swatch" style="background:${g.color.hex}"></div>
+      <div class="color-info">
+        <div class="color-name">${g.color.name}</div>
+        <div class="color-hex">${g.color.hex}</div>
+      </div>
+      <div class="color-count">${g.count}</div>
+    `;
+    div.onclick = () => selectColor(i);
+    list.appendChild(div);
+  });
+}
+
+function renderPaintColorList() {
+  const list = document.getElementById('paint-color-list');
+  list.innerHTML = '';
+  colorGroups.forEach((g, i) => {
+    const done = completedColors.has(g.color.hex);
+    const div = document.createElement('div');
+    div.className = 'color-item' + (i === activeColorIdx ? ' active' : '') + (done ? '" style="opacity:0.4' : '');
+    div.id = `pcol-${i}`;
+    div.innerHTML = `
+      <div class="color-swatch" style="background:${g.color.hex}; ${done ? 'filter:grayscale(1)' : ''}"></div>
+      <div class="color-info">
+        <div class="color-name">${done ? '✅ ' : ''}${g.color.name}</div>
+        <div class="color-hex">${g.color.hex}</div>
+      </div>
+      <div class="color-count" style="${done ? 'background:var(--mint)' : ''}">${g.count}</div>
+    `;
+    div.onclick = () => selectColor(i);
+    list.appendChild(div);
+  });
+}
+
+function selectColor(idx) {
+  activeColorIdx = idx;
+  const g = colorGroups[idx];
+  drawResult(g.color.hex);
+
+  // Update display
+  document.getElementById('current-swatch').style.background = g.color.hex;
+  document.getElementById('current-name').textContent = `${idx + 1}/${colorGroups.length} — ${g.color.name}`;
+  document.getElementById('current-hex').textContent = g.color.hex + ` (${g.count} pixel)`;
+  const pct = Math.round((completedColors.size / colorGroups.length) * 100);
+  document.getElementById('current-progress').textContent = `${completedColors.size}/${colorGroups.length} warna selesai (${pct}%)`;
+  document.getElementById('prog-fill').style.width = pct + '%';
+
+  renderPaintColorList();
+  document.getElementById(`pcol-${idx}`)?.scrollIntoView({ block: 'nearest' });
+
+  // Also scroll to result
+  document.getElementById('result-canvas').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function nextColor() {
+  if (activeColorIdx >= 0) completedColors.add(colorGroups[activeColorIdx].color.hex);
+  const next = (activeColorIdx + 1) % colorGroups.length;
+  selectColor(next);
+  showToast(`🎨 Warna ${next + 1}/${colorGroups.length}: ${colorGroups[next].color.name}`);
+}
+
+function prevColor() {
+  const prev = Math.max(0, activeColorIdx - 1);
+  selectColor(prev);
+}
+
+function startPaintMode() {
+  document.getElementById('paint-mode').style.display = 'block';
+  document.getElementById('paint-mode').scrollIntoView({ behavior: 'smooth' });
+  if (colorGroups.length > 0) selectColor(0);
+  showToast('🎨 Mode melukis aktif! Ikuti urutan warna dari atas');
+}
+
+function toggleGrid() {
+  showGrid = !showGrid;
+  drawResult(activeColorIdx >= 0 ? colorGroups[activeColorIdx]?.color.hex : null);
+  showToast(showGrid ? '🔲 Grid aktif' : '⬜ Grid nonaktif');
+}
+
+function downloadResult() {
+  const canvas = document.getElementById('result-canvas');
+  const link = document.createElement('a');
+  link.download = 'heartopia-pixel-art.png';
+  link.href = canvas.toDataURL('image/png');
+  link.click();
+  showToast('💾 Gambar berhasil didownload!');
+}
+
+// ========== TOAST ==========
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2500);
+}
+</script>
+</body>
+</html>
